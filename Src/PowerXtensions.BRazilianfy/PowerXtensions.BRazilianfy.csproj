@@ -2,8 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- <ImplicitUsings>enable</ImplicitUsings> -->
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <!-- <ItemGroup>
+    <PackageReference Include="powerxtensions.dotnet" Version="2.0.0" />
+  </ItemGroup> -->
 
 </Project>
