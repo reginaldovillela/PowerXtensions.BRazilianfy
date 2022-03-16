@@ -1,12 +1,13 @@
 using System;
+using PowerXtensions.BRazilianfy.Extensions;
 
 namespace PowerXtensions.BRazilianfy.Helpers
 {
-    internal class ModuleEleven
+    internal class Module11
     {
         internal static int Calculate(string value, params ushort[] multipliers)
         {
-            if (value.Length != multipliers.Length)
+            if (value.LengthNotEqualTo(multipliers.Length))
                 throw new Exception("Invalid data to calculate the digit");
 
             var i = 0;
@@ -14,14 +15,14 @@ namespace PowerXtensions.BRazilianfy.Helpers
 
             foreach (var c in value)
             {
-                amount += (c - '0') * (multipliers[i]);
+                amount += (c - '0') * multipliers[i];
                 i++;
             }
 
             if ((amount % 11) < 2)
                 return 0;
-            else
-                return 11 - (amount % 11);
+            
+            return 11 - (amount % 11);
         }
     }
 }

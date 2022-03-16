@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 
@@ -17,11 +18,11 @@ namespace PowerXtensions.BRazilianfy.Extensions
 
             var charToCompare = value[0];
 
-            for (int i = 0; i < value.Length; i++)
-                if (value[i] != charToCompare)
+            foreach (var c in value)
+                if (c != charToCompare)
                     return false;
                 else
-                    charToCompare = value[i];
+                    charToCompare = c;
 
             return true;
         }
@@ -36,11 +37,39 @@ namespace PowerXtensions.BRazilianfy.Extensions
             var charsNumbers = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
             var sb = new StringBuilder();
 
-            for (int i = 0; i < value.Length; i++)
-                if (charsNumbers.Contains(value[i]))
-                    sb.Append(value[i]);
+            foreach (var c in value)
+                if (charsNumbers.Contains(c))
+                    sb.Append(c);
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="lengthCompare"></param>
+        /// <returns></returns>
+        internal static bool LengthEqualTo(this string value, int lengthCompare)
+            => value.Length == lengthCompare;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="lengthCompare"></param>
+        /// <returns></returns>
+        internal static bool LengthNotEqualTo(this string value, int lengthCompare)
+            => value.Length != lengthCompare;
+
+        /// <summary>
+        /// Converts the String to a Long. If unable to convert an exception will be thrown
+        /// </summary>
+        /// <param name="value">String to be converted</param>
+        /// <returns>A Long will be returned or an exception will be thrown</returns>
+        public static long ToLong(this string value)
+            => long.TryParse(value, out var result)
+            ? result
+            : throw new InvalidCastException($"Unable to convert the {value} value to a long");
     }
 }

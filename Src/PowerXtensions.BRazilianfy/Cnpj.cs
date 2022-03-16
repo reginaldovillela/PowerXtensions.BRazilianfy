@@ -1,59 +1,88 @@
 using System;
-//using PowerXtensions.DotNet;
+using PowerXtensions.BRazilianfy.Contracts;
 using PowerXtensions.BRazilianfy.Helpers;
 using PowerXtensions.BRazilianfy.Extensions;
 
 namespace PowerXtensions.BRazilianfy
 {
-    public struct Cnpj : IDocument<Cnpj>
+    public readonly struct Cnpj : IDocument<Cnpj>
     {
-        private static readonly ushort[] multiplier1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
-        private static readonly ushort[] multiplier2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+        private const int DefaultLenght = 14;
 
-        private string _unmasked { get; set; } = "";
+        private const string DefaultMask = @"00\.000\.000\/0000\-00";
 
-        private string _masked { get; set; } = "";
+        private static readonly ushort[] Multiplier1 = { 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
 
+        private static readonly ushort[] Multiplier2 = { 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 };
+
+        private readonly string _cnpjNumber;
+
+        private string Masking => _cnpjNumber.OnlyNumbers().ToLong().Mask(DefaultMask);
+        
         public Cnpj(string cnpjNumber)
         {
-            _unmasked = cnpjNumber.OnlyNumbers();
-            _masked = Convert.ToUInt64(_unmasked).ToString(@"000\.000\.000\-00"); ;
+            _cnpjNumber = cnpjNumber;
         }
 
         public bool IsValid()
         {
-            if (_unmasked.Length != 14)
+            var number = _cnpjNumber.OnlyNumbers();
+
+            if (number.LengthNotEqualTo(DefaultLenght))
                 return false;
 
-            if (_unmasked.AllCharactersSame())
+            if (number.AllCharactersSame())
                 return false;
 
-            var digit1 = ModuleEleven.Calculate(_unmasked.Substring(0, 12), multiplier1);
-            var digit2 = ModuleEleven.Calculate(_unmasked.Substring(0, 13), multiplier2);
+            var digit1 = Module11.Calculate(number[..12], Multiplier1);
+            var digit2 = Module11.Calculate(number[..13], Multiplier2);
 
-            if (!_unmasked[12].ToInt().Equals(digit1))
+            if (!number[12].ToInt().Equals(digit1))
                 return false;
 
-            if (!_unmasked[13].ToInt().Equals(digit2))
+            if (!number[13].ToInt().Equals(digit2))
                 return false;
 
             return true;
         }
+        
+        public string ToStringWithMask()
+        {
+            return IsValid() 
+                ? Masking
+                : "Not a valid CNPJ";
+        }
 
+        public string ToStringWithoutMask()
+        {
+            return IsValid() 
+                ? _cnpjNumber.OnlyNumbers() 
+                : "Not a valid CNPJ";
+        }
+
+        public override string ToString()
+        {
+            return IsValid() 
+                ? $"The {Masking} is a valid CNPJ" 
+                : $"The {_cnpjNumber} is a invalid CNPJ";
+        }
+
+        #region Static Methods
+        
         public static Cnpj GenerateRandom()
         {
             var cnpj = new Random().NextInt64(11111111111111, 99999999999999);
-            var digit1 = ModuleEleven.Calculate($"{cnpj}", multiplier1);
-            var digit2 = ModuleEleven.Calculate($"{cnpj}{digit1}", multiplier2);
+            var digit1 = Module11.Calculate($"{cnpj}", Multiplier1);
+            var digit2 = Module11.Calculate($"{cnpj}{digit1}", Multiplier2);
 
             return new Cnpj($"{cnpj}{digit1}{digit2}");
         }
 
         public static bool IsValid(string cnpjNumber)
         {
-            var cnpj = new Cnpj(cnpjNumber);
-
-            return cnpj.IsValid();
+            return new Cnpj(cnpjNumber).IsValid();
         }
+        
+        #endregion
     }
 }
