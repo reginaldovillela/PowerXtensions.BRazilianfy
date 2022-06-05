@@ -11,16 +11,14 @@ namespace PowerXtensions.BRazilianfy.Tests
 
             Assert.True(cnpj.IsValid());
             Assert.True(Cnpj.IsValid("45.997.418/0001-53"));
-            //Assert.False(_cpf.Validate());
         }
 
-        // [Fact(DisplayName = "Test: Generate And Validate CPF")]
-        // public void GenerateAndValidateCpfTests()
-        // {
-        //     var _cpf = Cpf.GenerateRandom();
+        [Fact(DisplayName = "Test: Generate And Validate CNPJ")]
+        public void GenerateAndValidateCnpjTests()
+        {
+            var _cpf = Cnpj.GenerateRandom();
 
-        //     Assert.True(_cpf.IsValid());
-        //     //Assert.False(_cpf.Validate());
-        // }
+            Assert.True(_cpf.IsValid());
+        }
     }
 }
